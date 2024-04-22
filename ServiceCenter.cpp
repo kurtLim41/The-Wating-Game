@@ -1,6 +1,8 @@
 #include "ServiceCenter.h"
 #include <fstream>
+#include <sstream>
 #include <string>
+#include <vector>
 
 ServiceCenter::ServiceCenter(string inputFile){
     string line;
@@ -39,6 +41,7 @@ ServiceCenter::ServiceCenter(string inputFile){
     WindowLongestWaitRegistar = 0;
     WindowLongestWaitCashier = 0;
     WindowLongestWaitFinancialAid = 0;
+
 }
 
 ServiceCenter::~ServiceCenter(){
@@ -47,33 +50,81 @@ ServiceCenter::~ServiceCenter(){
     delete financialAid;
 }
 
-void ServiceCenter::runSimulation(string inputFile){
-    string line;
+bool ServiceCenter::allQueuesEmpty(){
+    if (registar->isQueueEmpty() && cashier->isQueueEmpty() && financialAid->isQueueEmpty())
+        return true;
+    return false;
+}
 
-    //opens input file
-    ifstream fin (inputFile);
-    if(!fin){
-        cerr << "cannot open inputFile"; //handles error if it cant open file
+
+void ServiceCenter::runSimulation( string& inputFile) {
+    string line;
+    ifstream fin(inputFile);
+    if (!fin) {
+        cerr << "Cannot open input file" << endl;
         return;
     }
 
-    //skip the first 3 lines that set up simulation 
+    // Skip the initial setup lines that define the number of windows in each office
     for (int i = 0; i < 3; ++i) {
-        getline(fin, line);
+        getline(fin, line);  // This just reads the lines but does nothing with them yet
     }
 
-    //set up variables for reading rest of txt
-    int arrivalTime , numStudents;
-    //run through rest of lines
-    while(getline(fin,line)){
-        fin >> arrivalTime >> numStudents;
-        
+    int arrivalTime, numStudents;
+    int registrarTime, cashierTime, financialAidTime;
+    char officeOrder1, officeOrder2, officeOrder3;
 
+    // Main simulation loop
+    int currentTime = 0;  // Start simulation time
+    while (!allQueuesEmpty() || getline(fin, line)) {
+        if (!line.empty()) {
+            stringstream ss(line);
+            ss >> arrivalTime >> numStudents;
+
+            // Process each customer arriving at the current tick
+            for (int i = 0; i < numStudents; ++i) {
+                ss >> registrarTime >> cashierTime >> financialAidTime >> officeOrder1 >> officeOrder2 >> officeOrder3;
+                
+                Customer customer(registrarTime, cashierTime, financialAidTime, officeOrder1, officeOrder2, officeOrder3);
+                switch (customer.getCurrentOffice()) {
+                    case 'R':
+                        registar->addCustomertoQueue(customer);
+                        break;
+                    case 'C':
+                        cashier->addCustomertoQueue(customer);
+                        break;
+                    case 'F':
+                        financialAid->addCustomertoQueue(customer);
+                        break;
+                    default:
+                        cerr << "Invalid office" << endl;
+                        break;
+                }
+            }
+        }
+
+        // Process each office at current time before moving to the next time
+        if (currentTime == arrivalTime) {
+            registar->updateOffice();
+            cashier->updateOffice();
+            financialAid->updateOffice();
+            currentTime++;  // Increment time only when all events at current time are processed
+        }
     }
 
+    // Close file stream
+    fin.close();
 
-
-
-
+    // Optional: Output or collect final statistics
+    // printStatistics();
 }
+
+
+
+
+
+
+
+
+
 

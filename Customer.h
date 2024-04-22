@@ -19,7 +19,7 @@ class Customer{
         ~Customer();
 
         //core functions 
-        void updateToNextOffice();
+        bool updateToNextOffice();
 
         //aux functions 
         int getRegisterTime();

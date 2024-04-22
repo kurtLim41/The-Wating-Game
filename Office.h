@@ -6,6 +6,7 @@
 #include "Customer.h"
 #include <iostream>
 #include <array>
+#include <vector>
 using namespace std;
 
 class Office{
@@ -25,6 +26,10 @@ class Office{
         //core functions 
         bool hasOpenWindow();
         void addCustomertoQueue(Customer newCustomer);
+        bool sendToWindow(Customer *customer);
+        bool isQueueEmpty();
+        vector<Customer*> updateOffice();
+
 
 
 

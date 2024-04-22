@@ -31,11 +31,15 @@ class ServiceCenter{
         int WindowLongestWaitCashier;
         int WindowLongestWaitFinancialAid;
 
+        
+
     public:
         ServiceCenter(string inputFile);
         ~ServiceCenter();
 
-        void runSimulation(string inputFile);
+        void runSimulation(string& inputFile);
+        bool allQueuesEmpty();
+        
 
         
 };
