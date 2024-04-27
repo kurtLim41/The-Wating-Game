@@ -1,7 +1,7 @@
 #include "Customer.h"
 
 Customer::Customer(){
-    
+
 }
 Customer::Customer(int rt , int ct , int fat , char a , char b , char c){
     registerTime = rt;
@@ -28,12 +28,14 @@ int Customer::getFinancialAidTime(){
     return financialAidTime;
 }
 
-void Customer::updateToNextOffice(){
+bool Customer::updateToNextOffice(){
     //check to make sure they dont index out of bound 
     if(currentOfficeIndex > 2){
         cerr << "error, not in a office" << endl;
+        return false;
     }
     currentOffice = orderVisted[++currentOfficeIndex];
+    return true;
 
 }
 
