@@ -13,12 +13,14 @@ Office::Office(string name, int w){
     officeQueue = new ListQueue<Customer>; 
     officeWindows = new Window[numWindows];
 
-    double totalWaitTime = 0; 
-    int longestWaitTime = 0;
-    int over10MinutesCount = 0;
-    double totalIdleTime = 0;
-    int longestIdleTime = 0;
-    int over5MinutesIdleCount = 0;
+    totalWaitTime = 0; 
+    longestWaitTime = 0;
+    over10MinutesCount = 0;
+    totalIdleTime = 0;
+    longestIdleTime = 0;
+    over5MinutesIdleCount = 0;
+    totalCustomers = 0;
+    
     
     //fill officeWindow array with windows 
     for (int i = 0; i < numWindows; ++i){
@@ -128,7 +130,7 @@ vector<Customer*> Office::updateOffice() {
 
 
 double Office::getMeanWaitTime() const {
-    return numWindows > 0 ? totalWaitTime / numWindows : 0;
+    return numWindows > 0 ? totalWaitTime / totalCustomers : 0;
 }
 
 int Office::getLongestWaitTime() const {
@@ -149,5 +151,19 @@ int Office::getLongestIdleTime() const {
 
 int Office::getOver5MinutesIdleCount() const {
     return over5MinutesIdleCount;
+}
+
+bool Office::allWindowsEmpty(){
+    bool temp = true;
+    for (int i = 0; i < numWindows; ++i){
+        if(!officeWindows[i].getIsOpen()){
+            temp = false;
+        }
+    }
+    return temp;
+}
+
+void Office::increaseTotalCustomerCount(){
+    totalCustomers++;
 }
 

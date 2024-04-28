@@ -24,6 +24,7 @@ class Office{
         double totalIdleTime;
         int longestIdleTime;
         int over5MinutesIdleCount;
+        int totalCustomers;
 
     
     public:
@@ -36,6 +37,7 @@ class Office{
         void addCustomertoQueue(Customer newCustomer);
         bool sendToWindow(Customer *customer);
         bool isQueueEmpty();
+        bool allWindowsEmpty();
         vector<Customer*> updateOffice();
 
         double getMeanWaitTime() const;
@@ -44,6 +46,7 @@ class Office{
         double getMeanIdleTime() const;
         int getLongestIdleTime() const;
         int getOver5MinutesIdleCount() const;
+        void increaseTotalCustomerCount();
 
 
 

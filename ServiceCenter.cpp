@@ -32,11 +32,14 @@ ServiceCenter::~ServiceCenter(){
     delete financialAid;
 }
 
-bool ServiceCenter::allQueuesEmpty(){
-    if (registar->isQueueEmpty() && cashier->isQueueEmpty() && financialAid->isQueueEmpty())
+
+bool ServiceCenter::allWindowsEmpty(){
+    if(registar->allWindowsEmpty() && cashier->allWindowsEmpty() && financialAid->allWindowsEmpty())
         return true;
     return false;
 }
+
+
 
 
 void ServiceCenter::runSimulation( string inputFile) {
@@ -50,6 +53,7 @@ void ServiceCenter::runSimulation( string inputFile) {
     // Skip the initial setup lines that define the number of windows in each office
     for (int i = 0; i < 3; ++i) {
         getline(fin, line);  // This just reads the lines but does nothing with them yet
+        cout << line << endl;
     }
 
     int arrivalTime, numStudents;
@@ -58,33 +62,38 @@ void ServiceCenter::runSimulation( string inputFile) {
 
     // Main simulation loop
     int currentTime = 0;  // Start simulation time
-    while (!allQueuesEmpty() || !fin.eof()) {
+    while (!allWindowsEmpty() || !fin.eof()) {
         if (!line.empty()) {
-            stringstream ssGetArrivalTime(line);
-            ssGetArrivalTime >> arrivalTime;
-            getline(fin,line);
-            stringstream ssGetNum(line);
-            ssGetNum >> numStudents;
+            if (!getline(fin, line)) break;  // Safely attempt to read the next line for arrival time
+            stringstream ss(line);
+            ss >> arrivalTime;  // Parse arrival time
+
+            if (!getline(fin, line)) break;  // Safely attempt to read the next line for number of students
+            stringstream ssNumStudents(line);
+            ssNumStudents >> numStudents;
             cout << "ArrivalTime: " << arrivalTime << " Number of Students: " << numStudents << endl;
 
             // Process each customer arriving at the current tick
-            getline(fin, line);
-            stringstream ssGetInfo(line);
             for (int i = 0; i < numStudents; ++i) {
-                ssGetInfo >> registrarTime >> cashierTime >> financialAidTime >> officeOrder1 >> officeOrder2 >> officeOrder3;
-                cout << registrarTime << cashierTime << financialAidTime << officeOrder1 << officeOrder2 << officeOrder3 << endl;
+                if (!getline(fin, line)) break;  // Read each student's detail line
+                stringstream ssDetail(line);
+                ssDetail >> registrarTime >> cashierTime >> financialAidTime >> officeOrder1 >> officeOrder2 >> officeOrder3;
+                cout << registrarTime << cashierTime << financialAidTime <<  officeOrder1 << officeOrder2 << officeOrder3 << endl;
                 
                 Customer customer(registrarTime, cashierTime, financialAidTime, officeOrder1, officeOrder2, officeOrder3);
                 //cout << customer.getCurrentOffice() << endl;
                 switch (customer.getCurrentOffice()) {
                     case 'R':
                         registar->addCustomertoQueue(customer);
+                        registar->increaseTotalCustomerCount();
                         break;
                     case 'C':
                         cashier->addCustomertoQueue(customer);
+                        cashier->increaseTotalCustomerCount();
                         break;
                     case 'F':
                         financialAid->addCustomertoQueue(customer);
+                        financialAid->increaseTotalCustomerCount();
                         break;
                     default:
                         cerr << "Invalid office" << endl;
@@ -95,17 +104,19 @@ void ServiceCenter::runSimulation( string inputFile) {
 
         // Process each office at current time before moving to the next time
         
-            registar->updateOffice();
-            cashier->updateOffice();
-            financialAid->updateOffice();
+        registar->updateOffice();
+        cashier->updateOffice();
+        financialAid->updateOffice();
 
 
-            currentTime++;  // Increment time only when all events at current time are processed
+        currentTime++;  // Increment time only when all events at current time are processed
         
     }
 
     // Close file stream
     fin.close();
+
+    cout << "total Time: " << currentTime << endl;
 
     // Optional: Output or collect final statistics
     displayStatistics();
@@ -113,32 +124,34 @@ void ServiceCenter::runSimulation( string inputFile) {
 
 
 void ServiceCenter::displayStatistics() {
-    // Displaying wait time statistics
-    cout << "Registrar Mean Wait Time: " << registar->getMeanWaitTime() << " minutes" << endl;
-    cout << "Cashier Mean Wait Time: " << cashier->getMeanWaitTime() << " minutes" << endl;
-    cout << "Financial Aid Mean Wait Time: " << financialAid->getMeanWaitTime() << " minutes" << endl;
+    // Cashier's Office Statistics
+    cout << "Cashier's Office:" << endl;
+    cout << "Mean student wait time: " << cashier->getMeanWaitTime() << " tick(s)" << endl;
+    cout << "Mean window idle time: " << cashier->getMeanIdleTime() << " tick(s)" << endl;
+    cout << "Longest student wait time: " << cashier->getLongestWaitTime() << " tick(s)" << endl;
+    cout << "Longest window idle time: " << cashier->getLongestIdleTime() << " tick(s)\n" << endl;
 
-    cout << "Registrar Longest Wait Time: " << registar->getLongestWaitTime() << " minutes" << endl;
-    cout << "Cashier Longest Wait Time: " << cashier->getLongestWaitTime() << " minutes" << endl;
-    cout << "Financial Aid Longest Wait Time: " << financialAid->getLongestWaitTime() << " minutes" << endl;
+    // Financial Aid Office Statistics
+    cout << "Financial Aid Office:" << endl;
+    cout << "Mean student wait time: " << financialAid->getMeanWaitTime() << " tick(s)" << endl;
+    cout << "Mean window idle time: " << financialAid->getMeanIdleTime() << " tick(s)" << endl;
+    cout << "Longest student wait time: " << financialAid->getLongestWaitTime() << " tick(s)" << endl;
+    cout << "Longest window idle time: " << financialAid->getLongestIdleTime() << " tick(s)\n" << endl;
 
-    // Total students waiting over 10 minutes across all offices
-    cout << "Total Students Waiting Over 10 Minutes: " 
-         << registar->getOver10MinutesCount() + cashier->getOver10MinutesCount() + financialAid->getOver10MinutesCount() << endl;
+    // Registrar's Office Statistics
+    cout << "Registrar's Office:" << endl;
+    cout << "Mean student wait time: " << registar->getMeanWaitTime() << " tick(s)" << endl;
+    cout << "Mean window idle time: " << registar->getMeanIdleTime() << " tick(s)" << endl;
+    cout << "Longest student wait time: " << registar->getLongestWaitTime() << " tick(s)" << endl;
+    cout << "Longest window idle time: " << registar->getLongestIdleTime() << " tick(s)\n" << endl;
 
-    // Displaying window idle time statistics
-    cout << "Registrar Mean Window Idle Time: " << registar->getMeanIdleTime() << " minutes" << endl;
-    cout << "Cashier Mean Window Idle Time: " << cashier->getMeanIdleTime() << " minutes" << endl;
-    cout << "Financial Aid Mean Window Idle Time: " << financialAid->getMeanIdleTime() << " minutes" << endl;
-
-    cout << "Registrar Longest Window Idle Time: " << registar->getLongestIdleTime() << " minutes" << endl;
-    cout << "Cashier Longest Window Idle Time: " << cashier->getLongestIdleTime() << " minutes" << endl;
-    cout << "Financial Aid Longest Window Idle Time: " << financialAid->getLongestIdleTime() << " minutes" << endl;
-
-    cout << "Number of Windows Idle Over 5 Minutes (Registrar): " << registar->getOver5MinutesIdleCount() << endl;
-    cout << "Number of Windows Idle Over 5 Minutes (Cashier): " << cashier->getOver5MinutesIdleCount() << endl;
-    cout << "Number of Windows Idle Over 5 Minutes (Financial Aid): " << financialAid->getOver5MinutesIdleCount() << endl;
+    // Total counts across all offices
+    int totalOver10Minutes = registar->getOver10MinutesCount() + cashier->getOver10MinutesCount() + financialAid->getOver10MinutesCount();
+    int totalIdleOver5Minutes = registar->getOver5MinutesIdleCount() + cashier->getOver5MinutesIdleCount() + financialAid->getOver5MinutesIdleCount();
+    cout << "Number of students waiting over 10 minutes across all offices: " << totalOver10Minutes << " tick(s)" << endl;
+    cout << "Number of windows idle for over 5 minutes across all offices: " << totalIdleOver5Minutes << " tick(s)" << endl;
 }
+
 
 
 

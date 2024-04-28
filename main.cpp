@@ -7,15 +7,15 @@ int main(){
     
     ListQueue<Customer> *test  = new ListQueue<Customer>;
 
-    test->insert(Customer(1,2,3,'a','b','c'));
-    test->insert(Customer(2,2,3,'a','b','c'));
-    test->insert(Customer(3,2,3,'a','b','c'));
+    // test->insert(Customer(1,2,3,'a','b','c'));
+    // test->insert(Customer(2,2,3,'a','b','c'));
+    // test->insert(Customer(3,2,3,'a','b','c'));
 
-    cout << test->getSize() << endl;
+    // cout << test->getSize() << endl;
 
-    test->remove();
+    // test->remove();
 
-    cout << test->getSize() << endl;
+    // cout << test->getSize() << endl;
 
     
 

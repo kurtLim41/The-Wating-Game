@@ -19,7 +19,7 @@ class ServiceCenter{
         ~ServiceCenter();
 
         void runSimulation(string inputFile);
-        bool allQueuesEmpty();
+        bool allWindowsEmpty();
         void displayStatistics(); // Method to display comprehensive statistics
 
         
