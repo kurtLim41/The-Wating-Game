@@ -1,25 +1,26 @@
 #include "LinkedList.h"
 #include "ListQueue.h"
 #include "ServiceCenter.h"
+#include "Customer.h"
 
 int main(){
-    LinkedList<int> *test = new LinkedList<int>;
+    
+    ListQueue<Customer> *test  = new ListQueue<Customer>;
 
-    test->insertBack(4);
-    test->insertBack(3);
-    test->insertBack(2);
-    test->insertBack(1);
-    test->printList();
+    test->insert(Customer(1,2,3,'a','b','c'));
+    test->insert(Customer(2,2,3,'a','b','c'));
+    test->insert(Customer(3,2,3,'a','b','c'));
 
-    ListQueue<char> *a = new ListQueue<char>;
-    a->insert('b');
-    a->insert('c');
-    a->insert('d');
-    a->insert('e');
+    cout << test->getSize() << endl;
 
-    a->printQueue();
+    test->remove();
+
+    cout << test->getSize() << endl;
+
+    
 
     ServiceCenter chapman("input.txt");
+    chapman.runSimulation("input.txt");
 
 
 }

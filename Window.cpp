@@ -4,6 +4,7 @@ Window::Window(){
     isOpen = true;
     int timeRemaining = 0;
     currentCustomer = NULL;
+    idleTime = 0;
 }
 
 Window::~Window(){
@@ -37,6 +38,10 @@ void Window::update(){
         isOpen = true;
         currentCustomer = NULL;
     }
+
+    if (!occupiedWindow()) {
+        idleTime++; // Increment idle time if the window is not occupied
+    }
 }
 
 Customer* Window::releaseCustomer() {
@@ -50,4 +55,16 @@ Customer* Window::releaseCustomer() {
     timeRemaining = 0;          // Reset the remaining time for good measure
 
     return tempCustomer;  // Return the customer who was just released
+}
+
+int Window::getIdleTime() {
+    return idleTime;
+}
+
+void Window::resetIdleTime() {
+    idleTime = 0;
+}
+
+void Window::updateIdleTime(){
+    idleTime++;
 }

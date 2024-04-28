@@ -12,6 +12,8 @@ Customer::Customer(int rt , int ct , int fat , char a , char b , char c){
     orderVisted[2] = c;
     currentOffice = orderVisted[0];
     currentOfficeIndex = 0;
+    totalWaitTime = 0;
+    waitTimeAtCurrentOffice = 0;
 }
 
 Customer::~Customer(){}
@@ -41,4 +43,18 @@ bool Customer::updateToNextOffice(){
 
 char Customer::getCurrentOffice(){
     return currentOffice;
+}
+
+void Customer::addToTotalWaitTime(int time) {
+    totalWaitTime += time;
+    waitTimeAtCurrentOffice += time;
+}
+
+int Customer::getTotalWaitTime() {
+    return totalWaitTime;
+}
+
+void Customer::resetWaitTime() {
+    totalWaitTime = 0;
+    waitTimeAtCurrentOffice = 0;
 }

@@ -17,6 +17,14 @@ class Office{
         ListQueue<Customer> *officeQueue;  //change type class to customer once i create that <Customer> 
         Window *officeWindows;
 
+        // Statistics tracking
+        double totalWaitTime;
+        int longestWaitTime;
+        int over10MinutesCount;
+        double totalIdleTime;
+        int longestIdleTime;
+        int over5MinutesIdleCount;
+
     
     public:
         Office(); //no gonna be used 
@@ -29,6 +37,13 @@ class Office{
         bool sendToWindow(Customer *customer);
         bool isQueueEmpty();
         vector<Customer*> updateOffice();
+
+        double getMeanWaitTime() const;
+        int getLongestWaitTime() const;
+        int getOver10MinutesCount() const;
+        double getMeanIdleTime() const;
+        int getLongestIdleTime() const;
+        int getOver5MinutesIdleCount() const;
 
 
 

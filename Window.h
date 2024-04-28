@@ -10,6 +10,7 @@ class Window{
         Customer *currentCustomer;
         bool isOpen;
         int timeRemaining;
+        int idleTime; // Added to track how long the window has been idle
 
     public:
         Window();
@@ -24,6 +25,9 @@ class Window{
         
 
         //aux functions 
-        bool getIsOpen();  
+        bool getIsOpen(); 
+        int getIdleTime(); // Retrieves the idle time of the window
+        void resetIdleTime(); // Resets the idle time counter 
+        void updateIdleTime();
 };
 #endif 
