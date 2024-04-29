@@ -15,12 +15,12 @@ class ListQueue{
         ~ListQueue();
 
         //core functions 
-        void insert(T d);  //aka enqueue()
-        T remove(); //dequeue
+        void insert(T *d);  //aka enqueue()
+        T* remove(); //dequeue
        
 
         //aux/helper functions 
-        T peek(); //whp is at the front of the queue
+        T* peek(); //whp is at the front of the queue
         bool isEmpty();
         unsigned int getSize(); //unsigned-> cant be less then 0
         void printQueue(); //helper function to visualize array base queue 
@@ -42,7 +42,7 @@ ListQueue<T>::~ListQueue(){
 }
 
 template <class T>
-void ListQueue<T>::insert(T d){
+void ListQueue<T>::insert(T *d){
     myQueue->insertBack(d);
 }
 
@@ -61,13 +61,13 @@ void ListQueue<T>::insert(T d){
 // }
 
 template <class T>
-T ListQueue<T>::remove(){
+T* ListQueue<T>::remove(){
     return myQueue->removeFront();
     
 }
 
 template <class T>
-T ListQueue<T>::peek(){
+T* ListQueue<T>::peek(){ 
     return myQueue->peek();
 }
 

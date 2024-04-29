@@ -8,9 +8,9 @@ template <class T>
 class ListNode{
     public:
         ListNode();
-        ListNode(T k);
+        ListNode(T* k);
         ~ListNode();
-        T key;
+        T* key;
         ListNode<T> *next;
         ListNode<T> *prev;
 };
@@ -23,7 +23,7 @@ ListNode<T>::ListNode(){
 }
 
 template <class T>
-ListNode<T>::ListNode(T k){
+ListNode<T>::ListNode(T* k){
     key = k;
     next = nullptr;
     prev = nullptr;
@@ -39,12 +39,12 @@ class LinkedList{
     public:
         LinkedList();
         ~LinkedList();
-        void insertBack(T d);
-        T removeFront();
+        void insertBack(T *d);
+        T* removeFront();
         T removeBack();
         bool isEmpty();
         unsigned int getSize();
-        T peek();
+        T* peek();
         void printList();  //helper functions 
         
     private:
@@ -73,7 +73,7 @@ LinkedList<T>::~LinkedList(){
 
 
 template <class T>
-void LinkedList<T>::insertBack(T d){
+void LinkedList<T>::insertBack(T *d){
     ListNode<T> *node = new ListNode<T>(d);
 
     if(isEmpty()){
@@ -98,7 +98,7 @@ unsigned int LinkedList<T>::getSize(){
 }
 
 template <class T>
-T LinkedList<T>::removeFront(){
+T* LinkedList<T>::removeFront(){
     if(isEmpty()){
         cerr << "list is empty" << endl;
     }
@@ -115,7 +115,7 @@ T LinkedList<T>::removeFront(){
     }
     front = front->next;
     temp->next = NULL;
-    T data = temp->key;
+    T* data = temp->key;
     --size;
 
     delete temp;
@@ -129,7 +129,7 @@ T LinkedList<T>::removeFront(){
 
 
 template <class T>
-T LinkedList<T>::peek(){
+T* LinkedList<T>::peek(){
     return front->key;
 }
 

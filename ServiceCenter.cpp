@@ -80,9 +80,9 @@ void ServiceCenter::runSimulation( string inputFile) {
                 ssDetail >> registrarTime >> cashierTime >> financialAidTime >> officeOrder1 >> officeOrder2 >> officeOrder3;
                 cout << registrarTime << cashierTime << financialAidTime <<  officeOrder1 << officeOrder2 << officeOrder3 << endl;
                 
-                Customer customer(registrarTime, cashierTime, financialAidTime, officeOrder1, officeOrder2, officeOrder3);
+                Customer* customer = new Customer(registrarTime, cashierTime, financialAidTime, officeOrder1, officeOrder2, officeOrder3);
                 //cout << customer.getCurrentOffice() << endl;
-                switch (customer.getCurrentOffice()) {
+                switch (customer->getCurrentOffice()) {
                     case 'R':
                         registar->addCustomertoQueue(customer);
                         registar->increaseTotalCustomerCount();
@@ -104,9 +104,34 @@ void ServiceCenter::runSimulation( string inputFile) {
 
         // Process each office at current time before moving to the next time
         
-        registar->updateOffice();
-        cashier->updateOffice();
-        financialAid->updateOffice();
+        // Collect customers needing further processing from all offices
+        vector<Customer*> customersToRoute;
+        vector<Customer*> temp;
+        temp = registar->updateOffice();
+        customersToRoute.insert(customersToRoute.end(), temp.begin(), temp.end());
+        temp = cashier->updateOffice();
+        customersToRoute.insert(customersToRoute.end(), temp.begin(), temp.end());
+        temp = financialAid->updateOffice();
+        customersToRoute.insert(customersToRoute.end(), temp.begin(), temp.end());
+
+        // Route customers to the appropriate next office
+        for (Customer* customer : customersToRoute) {
+            switch (customer->getCurrentOffice()) {
+                case 'R':
+                    registar->addCustomertoQueue(customer);
+                    break;
+                case 'C':
+                    cashier->addCustomertoQueue(customer);
+                    break;
+                case 'F':
+                    financialAid->addCustomertoQueue(customer);
+                    break;
+                default:
+                    cerr << "Invalid next office specified" << endl;
+                    delete customer; // Cleanup if there's an invalid office
+                    break;
+            }
+        }
 
 
         currentTime++;  // Increment time only when all events at current time are processed

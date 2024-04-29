@@ -34,7 +34,7 @@ class Office{
 
         //core functions 
         bool hasOpenWindow();
-        void addCustomertoQueue(Customer newCustomer);
+        void addCustomertoQueue(Customer *newCustomer);
         bool sendToWindow(Customer *customer);
         bool isQueueEmpty();
         bool allWindowsEmpty();

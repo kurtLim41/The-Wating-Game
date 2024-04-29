@@ -43,7 +43,7 @@ bool Office::hasOpenWindow(){
     return false;
 }
 
-void Office::addCustomertoQueue(Customer newCustomer){
+void Office::addCustomertoQueue(Customer *newCustomer){
     officeQueue->insert(newCustomer);
 }
 
@@ -84,6 +84,21 @@ bool Office::isQueueEmpty(){
 
 vector<Customer*> Office::updateOffice() {
     std::vector<Customer*> completedCustomers;
+    cout << "here" << endl;
+
+    // First check the queue and try to send customers to any available open window
+    while (!isQueueEmpty()) {
+        bool assigned = false;
+        for (int i = 0; i < numWindows && !assigned; i++) {
+            if (officeWindows[i].getIsOpen()) {
+                Customer *customer = officeQueue->peek(); // Peek at the front customer
+                sendToWindow(customer);
+                officeQueue->remove(); // Remove from queue only if sent to window
+                assigned = true; // Stop looking for an open window after assigning the customer
+            }
+        }
+        if (!assigned) break; // If no windows are open, break out of the loop
+    }
 
     for (int i = 0; i < numWindows; i++) {
         if (!officeWindows[i].getIsOpen()) { //runs if there is a person at the window 
